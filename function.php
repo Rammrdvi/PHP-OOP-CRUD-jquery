@@ -29,10 +29,21 @@ class DB_con {
     }
 
     // Function to fetch a single record from the database
-    public function fetchonerecord($userid) {
-        $result = $this->db->query("SELECT * FROM tblusers WHERE id='$userid'");
-        return $result->fetch_assoc();
+    public function fetchonerecord($userid)
+{
+    $sql = "SELECT * FROM tblusers WHERE id=?";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bind_param("i", $userid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows == 1) {
+        return $result;
+    } else {
+        return false; // Return false if no record found or query failed
     }
+}
+
 
     // Function to update data in the database
     public function update($fname, $lname, $emailid, $contactno, $address, $userid) {
